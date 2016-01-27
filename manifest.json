@@ -1,0 +1,13 @@
+{
+  "name": "MultiWii Experimental Configurator",
+  "description": "A tool for configuring MultiWii flight controllers",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["js/background.js"]
+    }
+  },
+  "icons": { "16": "images/quad-16.png", "128": "images/quad-128.png" },
+  "permissions": [ "serial", "geolocation", "videoCapture" ]
+}

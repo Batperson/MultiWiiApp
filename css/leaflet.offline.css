@@ -1,0 +1,7 @@
+div.savetiles {
+  background-color: #fff;
+}
+
+a.savetiles {
+    background: url('images/map-download-16.png') center no-repeat;
+}

@@ -1,0 +1,21 @@
+div.flight-controller {
+  background-color: #fff;
+}
+
+a.fcbutton {
+  width: 36px;
+  height: 36px;
+}
+
+a.fcbutton:hover {
+  width: 36px;
+  height: 36px;
+}
+
+a.downloadfc {
+  background: url('images/flight-controller-download-32.png') center no-repeat; 
+}
+
+a.uploadfc {
+  background: url('images/flight-controller-upload-32.png') center no-repeat; 
+}

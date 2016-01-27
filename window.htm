@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html ng-app="mainApp">
+  <head>
+    <title>MultiWii Experimental Configurator</title>
+    <link href="css/normalize.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/flightindicators.css" rel="stylesheet">
+    <link href="css/led.css" rel="stylesheet">
+    <link href="css/leaflet.css" rel="stylesheet">
+    <link href="css/leaflet.offline.css" rel="stylesheet">
+    <link href="css/leaflet.flightcontroller.css" rel="stylesheet">
+    <link href="css/leaflet.draw.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-static-top" ng-controller="navController as nav">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <p class="navbar-brand" href="#"><strong>MultiWii Experimental Configurator</strong></p>
+        </div>
+        <form class="navbar-form navbar-right">
+          <div class="form-group">
+            <span for="selectPort">Port</span>
+            <select id="selectPort" class="form-control" style="width: 120px;" ng-options="s for s in nav.serialPorts" ng-disabled="nav.serialPorts.length == 0 || nav.noConnect" ng-model="nav.port"></select>
+            <span for="selectBaud">Baud</span>
+            <select id="selectBaud" class="form-control" style="width: 120px;" ng-options="b for b in nav.baudRates" ng-disabled="nav.noConnect" ng-model="nav.baud"></select>
+          </div>
+          <button type="button" ng-click="nav.connect()" ng-hide="nav.connected" ng-disabled="nav.noConnect || !nav.port || !nav.baud" class="btn btn-default btn-success" style="width: 100px;">Connect</button>
+          <button type="button" ng-click="nav.disconnect()" ng-hide="!nav.connected" class="btn btn-default btn-danger" style="width: 100px;">Disconnect</button>
+        </form>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row" ng-controller="toolController as tool">
+        <div class="col-md-2 col-sm-2 col-lg-1 sidebar" ng-cloak>
+          <ul class="nav nav-pills nav-stacked">
+            <li ng-repeat="l in tool.tools" class="{{l.active ? 'active' : ''}}">
+              <a href="#" ng-click="tool.navigate(l.id)" >{{l.label}} 
+                <span ng-if="l.active" class="sr-only">(current)</span> 
+                <span ng-if="l.new" class="badge pull-right">New</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-10 col-sm-10 col-lg-11 main">
+          <div class="tool" tool-title="Cockpit" ng-controller="cockpitController as ck">
+            <div class="container-fluid nomarginpad">
+              <div class="row">
+                <div class="col-md-12 col-sm-12">
+                  <div id="fpv" ></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-10 col-sm-10">
+                  <span id="airspeed"></span>
+                  <span id="attitude"></span>
+                  <span id="altimeter"></span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-10 col-sm-10">
+                  <span id="turn-coordinator"></span>
+                  <span id="heading"></span>
+                  <span id="variometer"></span>
+                </div>
+              </div>
+            </div>      
+          </div>
+          <div class="tool" id='navigation' tool-title="Navigation" ng-controller="navigationController as nc">
+            <div class="container-fluid nomarginpad">
+              <div class="row">
+                <div class="col-md-9 col-sm-9">
+                  <div id='nav-map-container' style="width: 100%; height: 420px; min-height: 420px;">
+                    <leaflet id="nav-map" width="100%" height="100%" center="centre" defaults="defaults" layers="layers" markers="markers" paths="paths" controls="controls"></leaflet>
+                  </div>
+                  <div ng-if="tilesToDownload > 0" style="margin-top: 4px;">
+                    <uib-progressbar max="tilesToDownload" value="tilesDownloaded"><span style="color:white; white-space:nowrap;">{{tilesDownloaded}} / {{tilesToDownload}}</span></uib-progressbar>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-3 nomarginpad">
+                  <div id="nav-mission-steps">
+                    <ul class="mission-steps">
+                      <li class="mission-step" ng-repeat="s in waypoints">
+                        <div class="mission-step-inner">
+                          <div class="{{ 'mission-step-header mission-step-' + s.missionStepAction.replace('_', '-') }}">
+                            <a data-toggle="collapse" href="#mission-step-{{ s.missionStepNumber}}">
+                              <span class="mission-step-number">{{ s.missionStepNumber }}</span>
+                              <span class="mission-step-action">{{ s.missionStepAction.replace('_', ' ').toUpperCase() }}</span>
+                              <span></span>
+                            </a>
+                          </div>
+                          <div class="mission-step-body collapse" id="mission-step-{{ s.missionStepNumber }}">
+                            <div>
+                              <span class="mission-step-field-label">Altitude: </span>
+                              <span class="mission-step-field"><input type="number" ng-model="s.altitude" min="1" max="400"></input></span>
+                            </div>
+                            <div ng-show="s.missionStepAction == 'hold_time'">
+                              <span class="mission-step-field-label">Pause: </span>
+                              <span class="mission-step-field"><input type="number" ng-model="s.param1" min="1" max="400"></input></span>
+                            </div>
+                            <div ng-show="s.missionStepAction == 'rth'">
+                              <span class="mission-step-field-label">Land: </span>
+                              <span class="mission-step-field"><input type="checkbox"></input></span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tool" tool-title="Radio">
+            <h1 class="page-header">Radio</h1>
+          </div>
+          <div class="tool" tool-title="PID">
+            <h1 class="page-header">PID</h1>
+          </div>
+          <div class="tool" tool-title="Misc">
+            <h1 class="page-header">Misc</h1>
+          </div>
+          <div class="tool" tool-title="Terminal" ng-controller="terminalController as term">
+            <div id="terminal" ng-cloak>
+              <ul>
+                <li ng-repeat="l in term.console" ng-class="term.terminalLineClass(l)">{{l.line}}</li>
+              </ul>
+            </div>
+            <form id="terminal-input-form" class="form-inline">
+              <div class="input-group" style="width: 640px">
+                <input type="text" class="form-control" id="terminal-input" ng-keydown="term.keyDown($event)" ng-model="term.input"></input>
+                <div class="input-group-addon" style="width: 40px;">
+                  <button type="button" class="btn btn-xs" ng-click="term.send()">Send</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="status-bar navbar navbar-default navbar-fixed-bottom" ng-controller="statusController as stat">
+      <div class="container-fluid">
+        <div class="status-bar navbar-header navbar-text" style="width: 100%">
+          <form class="navbar-form navbar-left">
+            <span ng-bind="statusText"></span>
+          </form>
+          <form class="navbar-form navbar-right">
+            <span ng-class="gpsClass(sgps)">GPS Sats: {{ gps.sats }}</span>
+            <span ng-class="navClass(nav)">NAV State: {{ nav.state }}</span>
+            <span>&nbsp;&nbsp;|&nbsp;</span>
+            <span ng-class="cycleTimeClass()">Cycle Time: {{ cycleTime }}</span>
+            <span ng-class="errorCountClass(mspErrors)">MSP Errors: {{ mspErrors }}</span>
+            <span ng-class="errorCountClass(i2cErrors)">I2C Errors: {{ i2cErrors }}</span>
+            <span ng-class="connectionStatusClass" ng-bind="connectionStatus" ></span>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <!--<script src="js/jquery.flightindicators.min.js"></script>-->
+    <script src="js/jquery.flightindicators.js"></script>
+    <script src="js/jquery.led.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <!--<script src="js/angular-animate.min.js"></script>-->
+    <script src="js/leaflet.js"></script>
+    <script src="js/angular-leaflet-directive.min.js"></script>
+    <script src="js/ui-bootstrap-tpls.min.js"></script>
+    
+    <!-- leaflet stuff -->
+    <script src="js/marker.rotate.js"></script>
+    <script src="js/lazystorage.js"></script>
+    <script src="js/leaflet.functionaltilelayer.js"></script>
+    <script src="js/tilelayer.offline.js"></script>
+    <script src="js/control.savetiles.js"></script>
+    <script src="js/control.buttons.js"></script>
+    <script src="js/leaflet.draw.js"></script>
+    
+    <script src="js/main.js"></script>
+    <script src="js/coms.js"></script>
+    <script src="js/msp.js"></script>
+    <script src="js/poll.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/cockpit.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/navigation.js"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+.led-indicator {
+  color: #333;
+  margin: 20px auto;
+  padding: 2px;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+.led-indicator-red {
+  background-color: #940;
+  box-shadow: #000 0 -1px 7px 1px, inset #600 0 -1px 9px, #a00000 0 2px 12px;
+  
+}
+
+.led-indicator-red-on {
+  color: #300;
+  background-color: #ff1010 !important;
+  box-shadow: #000 0 -1px 7px 1px, inset #600 0 -1px 9px, #ff0000 0 2px 12px !important;
+  -webkit-animation: blinkRed 0.5s;
+}
+
+@-webkit-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}

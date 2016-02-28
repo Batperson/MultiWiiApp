@@ -58,6 +58,12 @@
 					_setAltitude(settings.altitude);
 					_setPressure(settings.pressure);
 				break;
+        case 'generic':
+          $(this).html('<div class="instrument generic"><img src="' + settings.img_directory + 'fi_box.svg" class="background box" alt="" /><div class="needle box"><img src="' + settings.img_directory + 'fi_needle.svg" class="box" alt="" /></div><div class="mechanics box"><img src="' + settings.img_directory + 'fi_circle.svg" class="box" alt="" /></div></div>');
+					_setValue(settings.value);
+          _setSecondaryValue(settings.secondaryValue);
+        break;
+        case 'attitude':
 				default:
 					$(this).html('<div class="instrument attitude"><img src="' + settings.img_directory + 'fi_box.svg" class="background box" alt="" /><div class="roll box"><img src="' + settings.img_directory + 'horizon_back.svg" class="box" alt="" /><div class="pitch box"><img src="' + settings.img_directory + 'horizon_ball.svg" class="box" alt="" /></div><img src="' + settings.img_directory + 'horizon_circle.svg" class="box" alt="" /></div><div class="mechanics box"><img src="' + settings.img_directory + 'horizon_mechanics.svg" class="box" alt="" /><img src="' + settings.img_directory + 'fi_circle.svg" class="box" alt="" /></div></div>');
 					_setRoll(settings.roll);
@@ -68,6 +74,17 @@
 		});
 
 		// Private methods
+    function _setValue(value) {
+      var needle = 90;
+			placeholder.each(function(){
+				$(this).find('div.instrument.generic div.needle').css('transform', 'rotate(' + needle + 'deg)');
+			});	
+    }
+    
+    function _setSecondaryValue(value) {
+      
+    }
+    
 		function _setRoll(roll){
 			placeholder.each(function(){
 				$(this).find('div.instrument.attitude div.roll').css('transform', 'rotate('+roll+'deg)');
@@ -155,6 +172,8 @@
 		}
 
 		// Public methods
+    this.setValue = function(value){_setValue(value);}
+    this.setSecondaryValue = function(value){_setSecondaryValue(value);}
 		this.setRoll = function(roll){_setRoll(roll);}
 		this.setPitch = function(pitch){_setPitch(pitch);}
 		this.setHeading = function(heading){_setHeading(heading);}

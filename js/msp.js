@@ -146,6 +146,37 @@ class MspReader {
     
     return v; 
   }
+  readNames() {
+    var str = '';
+    while(this.offset < this.view.length) 
+      str += String.fromCharCode(this.readUint8());
+    
+    return str.split(';');
+  }
+  readUint8Array() {
+    var arr = [];
+    while(this.offset < this.view.length) 
+      arr.push(this.readUint8());
+    
+    return arr;
+  }
+  readUint16Array() {
+    var arr = [];
+    while(this.offset < this.view.length) 
+      arr.push(this.readUint16());
+    
+    return arr;
+  }
+  readPidArray() {
+    var arr = [];
+    while(this.offset < this.view.length) 
+      arr.push({ 
+        p : this.readUint8(),
+        i : this.readUint8(),
+        d : this.readUint8() });
+    
+    return arr;
+  }
 }    
 
 angular.module('mspModule', [])
@@ -313,10 +344,19 @@ angular.module('mspModule', [])
           retVal.debug4        = data.readInt16();
           break;
         case MSP.BOX:
+          retVal.boxstates     = data.readUint16Array();
           break;
         case MSP.BOXNAMES:
+          retVal.boxnames      = data.readNames();
           break;
         case MSP.BOXIDS:
+          retVal.boxids        = data.readUint8Array();
+          break;
+        case MSP.PID:
+          retVal.pids          = data.readPidArray();
+          break;
+        case MSP.PIDNAMES:  
+          retVal.pidnames      = data.readNames();
           break;
         case MSP.BARO:
           retVal.pressure  = data.readUint32();

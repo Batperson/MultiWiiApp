@@ -54,11 +54,11 @@ angular.module('cockpitModule', ['pollModule', 'settingsModule'])
     });
 
     $document.ready(function () {
-      attitudeGauge   = $.flightIndicator('#attitude', 'attitude', { size: 155, img_directory: 'images/'});
-      headingGauge    = $.flightIndicator('#heading', 'heading', { size: 155, img_directory: 'images/'});
-      variometerGauge = $.flightIndicator('#variometer', 'variometer', { size: 155, img_directory: 'images/'});
-      airspeedGauge   = $.flightIndicator('#airspeed', 'airspeed', { size: 155, img_directory: 'images/'});
-      altimeterGauge  = $.flightIndicator('#altimeter', 'altimeter', { size: 155, img_directory: 'images/'});
-      turnCoordGauge  = $.flightIndicator('#turn-coordinator', 'turn_slip_indicator', {size: 155, img_directory: 'images/'});
+      attitudeGauge   = $.flightIndicator('#attitude', 'attitude', { size: 120, img_directory: 'images/'});
+      headingGauge    = $.flightIndicator('#heading', 'heading', { size: 120, img_directory: 'images/'});
+      variometerGauge = $.flightIndicator('#variometer', 'variometer', { size: 120, img_directory: 'images/'});
+      airspeedGauge   = $.flightIndicator('#airspeed', 'airspeed', { size: 120, img_directory: 'images/'});
+      altimeterGauge  = $.flightIndicator('#altimeter', 'altimeter', { size: 120, img_directory: 'images/'});
+      turnCoordGauge  = $.flightIndicator('#turn-coordinator', 'turn_slip_indicator', {size: 120, img_directory: 'images/'});
     }); 
   }]);

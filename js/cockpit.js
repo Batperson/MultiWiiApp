@@ -2,34 +2,26 @@
 
 angular.module('cockpitModule', ['pollModule', 'settingsModule'])
   .controller('cockpitController', ['coms', 'msp', 'poll', 'settings', '$document', '$interval', function(coms, msp, poll, settings, $document, $interval) {
-    var timer1;
     var attitudeGauge;
     var headingGauge;
     var variometerGauge;
     var airspeedGauge;
     var altimeterGauge;
     var turnCoordGauge;
-    
-    var interval      = 0;
-    var timerRate     = 50; // 20hz update
-    
+    var voltsGauge;
+    var ampsGauge;
+
     coms.addListener('connection', function(state) {
       switch(state) {
         case 'connected':
-          timer1 = $interval(function() {
-            coms.send(MSP.ATTITUDE);
-            coms.send(MSP.ALTITUDE);
-            coms.send(MSP.RAW_GPS);
-            
-            if((interval++ % 5) == 0) {
-              coms.send(MSP.STATUS);
-              coms.send(MSP.ANALOG);
-            }
-            
-          }, timerRate, 0, false);
+          poll.addCmd(MSP.ATTITUDE, 0);
+          poll.addCmd(MSP.ALTITUDE, 0);
+          poll.addCmd(MSP.RAW_GPS, 1);
+          poll.addCmd(MSP.COMP_GPS, 1);
+          poll.addCmd(MSP.STATUS, 1);
+          poll.addCmd(MSP.ANALOG, 1);
           break;
         case 'disconnected':
-          $interval.cancel(timer1);
           break;
       }
     });
@@ -37,7 +29,7 @@ angular.module('cockpitModule', ['pollModule', 'settingsModule'])
       switch(msg.cmd) {
         case MSP.ATTITUDE:
           attitudeGauge.setRoll(msg.roll);
-          attitudeGauge.setPitch(-msg.pitch);
+          attitudeGauge.setPitch(msg.pitch);
           headingGauge.setHeading(msg.heading);
           break;
         case MSP.ALTITUDE:
@@ -45,20 +37,29 @@ angular.module('cockpitModule', ['pollModule', 'settingsModule'])
           variometerGauge.setVario(msg.vario);
           break;
         case MSP.RAW_GPS:
-          airspeedGauge.setAirSpeed(msg.speed);
+          airspeedGauge.setAirspeed(msg.speed);
+          break;
+        case MSP.COMP_GPS:
+          headingGauge.setBeacon2(msg.directionHome);
+          headingGauge.showBeacon2(true);
           break;
         case MSP.STATUS:
+          break;
         case MSP.ANALOG:
+          voltsGauge.setVolts(msg.vbat / 10);
+          ampsGauge.setAmps(msg.amperage);
           break;
       } 
     });
 
     $document.ready(function () {
-      attitudeGauge   = $.flightIndicator('#attitude', 'attitude', { size: 120, img_directory: 'images/'});
-      headingGauge    = $.flightIndicator('#heading', 'heading', { size: 120, img_directory: 'images/'});
-      variometerGauge = $.flightIndicator('#variometer', 'variometer', { size: 120, img_directory: 'images/'});
-      airspeedGauge   = $.flightIndicator('#airspeed', 'airspeed', { size: 120, img_directory: 'images/'});
-      altimeterGauge  = $.flightIndicator('#altimeter', 'altimeter', { size: 120, img_directory: 'images/'});
-      turnCoordGauge  = $.flightIndicator('#turn-coordinator', 'turn_slip_indicator', {size: 120, img_directory: 'images/'});
+      attitudeGauge   = $.attitude('#attitude', { size: 120 });
+      headingGauge    = $.heading('#heading', { size: 120 });
+      variometerGauge = $.variometer('#variometer', { size: 120 });
+      airspeedGauge   = $.airspeed('#airspeed', { size: 120 });
+      altimeterGauge  = $.altimeter('#altimeter', { size: 120 });
+      turnCoordGauge  = $.turn_slip_indicator('#turn-coordinator', {size: 120 });
+      voltsGauge      = $.voltmeter('#voltmeter', {size: 120, minVolts: 10, maxVolts: 13, warnVolts: 11.5, critVolts: 11.1 });
+      ampsGauge       = $.ammeter('#ammeter', {size: 120 });
     }); 
   }]);

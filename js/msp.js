@@ -559,14 +559,20 @@ angular.module('mspModule', [])
     }
     
     var encodeMsp = function(msg) {
-      var msgs      = (typeof msg === 'array') ? msg : [msg];
+      var msgs      = (msg.constructor === Array) ? msg : [msg];
+      msgs.forEach(function(m,i,a) {
+        if(typeof m === 'number')
+          a[i] = { cmd: m };
+      });
       
-      var len       = msgs.reduce(function(p,c,i,a) { return getMsgBufLen(c); }, 0);
-      var data      = new ArrayBuffer(len);
+      var lens      = msgs.map(function(m) { return getMsgBufLen(m); });
+      var totlen    = lens.reduce(function(sum,cur) { return sum + cur; }, 0);
+      var data      = new ArrayBuffer(totlen);
       var writer    = new MspWriter(data);
       
       data.cmds     = [];
       msgs.forEach(function(m, i, a) {
+        var len = lens[i];
         data.cmds.push(m.cmd);
         writer.writeHeader(m.cmd, len-6);
         switch(m.cmd) {
@@ -584,8 +590,6 @@ angular.module('mspModule', [])
     
     var getMsgBufLen = function(msg) {
       var cmd = msg.cmd;
-      if(!cmd && typeof msg === 'number')
-        msg.cmd = msg;
       
       switch(msg.cmd) {
         case MSP.WP:

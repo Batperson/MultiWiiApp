@@ -11,7 +11,7 @@ angular.module('pollModule', ['comsModule'])
       if(!rateHz)
         throw new Error('Invalid rate specified');
       
-      refresh = 1000 / rateHz;
+      interval = 1000 / rateHz;
       
       if(timerId) 
         start();
@@ -46,10 +46,10 @@ angular.module('pollModule', ['comsModule'])
     var addCmd = function(cmd, schedule) {
       if(typeof cmd != 'number')
         throw new Error('Invalid command specified');
-      if(!schedule || schedule < 0 || schedule > 2)
+      if(schedule === undefined || schedule < 0 || schedule > 2)
         throw new Error('Invalid schedule specified');
       
-      s = schedules[schedule];
+      var s = schedules[schedule];
       var ix = s.findIndex(function(e,i,a) { return (e === cmd); });
       if(ix < 0)
         s.push(cmd);

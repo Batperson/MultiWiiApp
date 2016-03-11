@@ -15,6 +15,7 @@ angular.module('mainModule', ['pollModule', 'settingsModule'])
     coms.addListener('connection', function(status) {
       switch(status) {
         case 'disconnected':
+          poll.stop();
           nav.noConnect = false;
           nav.connected = false;
           $scope.$apply();
@@ -22,6 +23,8 @@ angular.module('mainModule', ['pollModule', 'settingsModule'])
         case 'connected':
           nav.connected = true;
           nav.noConnect = true;
+          poll.setRefreshRate(20); // TODO: Make this configurable
+          poll.start();
         default:
           nav.noConnect = true;
           break;

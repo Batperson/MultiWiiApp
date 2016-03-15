@@ -53,13 +53,13 @@ angular.module('cockpitModule', ['pollModule', 'settingsModule'])
     });
 
     $document.ready(function () {
-      attitudeGauge   = $.attitude('#attitude', { size: 120 });
-      headingGauge    = $.heading('#heading', { size: 120 });
-      variometerGauge = $.variometer('#variometer', { size: 120 });
-      airspeedGauge   = $.airspeed('#airspeed', { size: 120 });
-      altimeterGauge  = $.altimeter('#altimeter', { size: 120 });
-      turnCoordGauge  = $.turn_slip_indicator('#turn-coordinator', {size: 120 });
-      voltsGauge      = $.voltmeter('#voltmeter', {size: 120, minVolts: 10, maxVolts: 13, warnVolts: 11.5, critVolts: 11.1 });
-      ampsGauge       = $.ammeter('#ammeter', {size: 120 });
+      attitudeGauge   = $.attitude('#attitude', { size: 140 });
+      headingGauge    = $.heading('#heading', { size: 140 });
+      variometerGauge = $.variometer('#variometer', { size: 140, caption2: 'METRES / SECOND' });
+      airspeedGauge   = $.airspeed('#airspeed', { size: 140, caption2: 'METRES / SECOND' });
+      altimeterGauge  = $.altimeter('#altimeter', { size: 140, caption2: '1 METRE', caption3: '10', caption4: 'METRES' });
+      turnCoordGauge  = $.turn_slip_indicator('#turn-coordinator', {size: 140 });
+      voltsGauge      = $.voltmeter('#voltmeter', {size: 140, minVolts: 10, maxVolts: 13, warnVolts: 11.5, criticalVolts: 11.1 });
+      ampsGauge       = $.ammeter('#ammeter', {size: 140 });
     }); 
   }]);

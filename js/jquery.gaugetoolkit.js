@@ -819,7 +819,7 @@
       gauges : [ { 
         movementRange: 320,
         movementStart: 90,
-        labels: [ { caption: 'AIR SPEED', position: {x:200, y:160} }, { caption: 'KNOTS', position: {x:200, y:240} } ],
+        labels: [ { caption: options.caption1 || 'AIR SPEED', position: {x:200, y:160} }, { caption: options.caption2 || 'KNOTS', position: {x:200, y:240} } ],
         ranges: [ 
           { offset: 150, extent: -10, fromValue:30, toValue:100, class: 'range safe' }, 
           { offset: 150, extent: -10, fromValue:100,  toValue:140, class: 'range warn' }, 
@@ -843,13 +843,13 @@
         }, 
         { registers: [0], movementStart : 90, movementRange: 360, modulo: 10000, renderBase: $.GT.renderAltimeterFace, renderIndicator: $.GT.renderSmallNeedle, mechanics: $.GT.clockGaugeMechanics,
           labels: [ 
-            { class: 'label large', caption: 'ALT', position: {x:200, y:155} },
-            { class: 'label small', caption: '1000 FEET', position: {x:200, y:130} },
-            { class: 'label small', caption: '100', position: {x:180, y:85} },
-            { class: 'label small', caption: 'FEET', position: {x:225, y:85} },
-            { class: 'label small', caption: 'CALIBRATED', position: {x:145, y:185} }, 
-            { class: 'label small', caption: 'TO', position: {x:145, y:200} },
-            { class: 'label small', caption: '25 000 FEET', position: {x:145, y:215} } ],
+            { class: 'label large', caption: options.caption1 || 'ALT', position: {x:200, y:155} },
+            { class: 'label small', caption: options.caption2 || '1000 FEET', position: {x:200, y:130} },
+            { class: 'label small', caption: options.caption3 || '100', position: {x:180, y:85} },
+            { class: 'label small', caption: options.caption4 || 'FEET', position: {x:225, y:85} },
+            { class: 'label small', caption: options.caption5 || 'CALIBRATED', position: {x:145, y:185} }, 
+            { class: 'label small', caption: options.caption6 || 'TO', position: {x:145, y:200} },
+            { class: 'label small', caption: options.caption7 || '25 000 FEET', position: {x:145, y:215} } ],
           ranges: [ 
             { class: 'hidden', offset: 150, scales: [ { divisions: 10, extent:-25, label: { formatFunction: function(v) { return v/1000; }, skip: [2000, 3000] } }, { divisions: 5, extent: -20 } ] } ],
         },
@@ -863,12 +863,12 @@
     var obj = $.instrument(placeholder, $.extend(true, {
       class: 'variometer',
       registers: [ 
-        { maxValue : 2, minValue : -2,   setFuncName: 'setVario', getFuncName: 'getVario' } ],
+        { maxValue : 2, minValue : -2, value: 0, setFuncName: 'setVario', getFuncName: 'getVario' } ],
       gauges : [ 
         { registers: [0], movementStart: 180, movementRange: 360, renderBase: $.GT.renderVarioFace, renderIndicator: $.GT.renderNeedle, mechanics: $.GT.radialGaugeMechanics,
           labels: [ 
-            { class: 'label', caption: 'VERTICAL SPEED', position: {x:200, y:165} },
-            { class: 'label', caption: '1000 FEET PER MIN', position: {x:200, y:235} }],
+            { class: 'label', caption: options.caption1 || 'VERTICAL SPEED', position: {x:200, y:165} },
+            { class: 'label', caption: options.caption2 || '1000 FEET PER MIN', position: {x:200, y:235} }],
           ranges: [ 
             { class: 'hidden', offset: 150, scales: [ { divisions: 8, extent:-25, label: {  }, skip:[ { above:1.9, below:-1.9 } ] }, { divisions: 5, extent: -20 }, { divisions: 2, extent: -15, skip: [{above:0.5, below:-0.5}] } ] }, ],
         }], 
@@ -928,7 +928,7 @@
       registers: [ { maxValue : options.maxAmps || 30, minValue : 0, getFuncName: 'getAmps', setFuncName: 'setAmps' } ],
       gauges : [ 
         { offset: { y:60 }, scale: 1.2, 
-          labels: [ { caption: 'AMPS', position: {x:200, y:160} } ],
+          labels: [ { caption: options.caption1 || 'AMPS', position: {x:200, y:160} } ],
           ranges: [ 
             { offset:134, scales: [ { offset: -2, divisions: 5, label: { } }, { offset: -2, width : 1, divisions : 2, extent:-10 } ] } ],
         } ], 
@@ -945,7 +945,7 @@
       registers: [ { maxValue : maxVolts, minValue : minVolts, getFuncName: 'getVolts', setFuncName: 'setVolts' } ],
       gauges : [ 
         { offset: { y:60 }, scale: 1.2, 
-          labels: [ { caption: 'VOLTS', position: {x:200, y:160} } ],
+          labels: [ { caption: options.caption1 || 'VOLTS', position: {x:200, y:160} } ],
           ranges: [ 
             { fromValue:minVolts,  toValue:critVolts, class: 'range critical', extent: -8 }, 
             { fromValue:critVolts, toValue:warnVolts, class: 'range warn', extent: -8 }, 
